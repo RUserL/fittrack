@@ -410,6 +410,18 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
       <div id="prof-stats"></div>
     </div>
     <div class="card">
+      <div class="card-label">API-Key (Foto-Analyse)</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:10px;line-height:1.5">
+        Für die KI-Foto-Analyse brauchst du einen Anthropic API-Key.<br>
+        Erstelle ihn kostenlos auf <a href="https://console.anthropic.com" target="_blank" style="color:var(--accent)">console.anthropic.com</a> → API Keys.<br>
+        <span style="font-size:12px;color:var(--text3)">Kosten: ~$0.003 pro Foto · wird nur auf diesem Gerät gespeichert.</span>
+      </div>
+      <div id="api-key-status" style="margin-bottom:10px"></div>
+      <input class="edit-inp" type="password" id="api-key-input" placeholder="sk-ant-api03-..." autocomplete="off">
+      <button onclick="saveApiKey()" style="width:100%;padding:12px;border-radius:10px;border:none;cursor:pointer;font-size:15px;font-weight:600;background:var(--accent);color:#fff;margin-bottom:6px">API-Key speichern</button>
+      <button onclick="deleteApiKey()" style="width:100%;padding:11px;border-radius:10px;border:1px solid var(--border-strong);cursor:pointer;font-size:14px;background:none;color:var(--red-text)">Key löschen</button>
+    </div>
+    <div class="card">
       <div class="card-label">Ziele anpassen</div>
       <label class="inp-label">Kalorien-Ziel (kcal)</label>
       <input class="edit-inp" type="number" id="p-kcal" oninput="saveOverride()">
@@ -455,7 +467,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
     <button class="modal-close" onclick="closeModal('meal-modal')">×</button>
     <div class="modal-title">Mahlzeit hinzufügen</div>
     <div class="ai-badge">✨ KI-Foto-Analyse</div>
-    <div class="photo-zone" onclick="document.getElementById('file-input').click()">
+    <div id="api-key-notice" style="display:none;background:var(--amber-bg);border-radius:10px;padding:11px 13px;margin-bottom:10px;font-size:13px;color:var(--amber-text)">
+      ⚠️ Kein API-Key. Geh zu <b>Profil → API-Key eingeben</b> um die Foto-Analyse zu aktivieren.
+    </div>
+    <div class="photo-zone" onclick="handlePhotoClick()">
       <div class="pz-icon">📷</div>
       <div class="pz-text">Foto aufnehmen oder hochladen</div>
       <div class="pz-sub">Claude erkennt Kalorien & Nährwerte automatisch</div>
@@ -580,8 +595,11 @@ function goStep(n){
     const h=parseInt(document.getElementById('on-h').value);
     const w=parseFloat(document.getElementById('on-w').value);
     const t=parseFloat(document.getElementById('on-t').value);
-    if(!profile.sex){alert('Bitte Geschlecht wählen.');return;}
-    if(!age||!h||!w){alert('Bitte alle Felder ausfüllen.');return;}
+    // Read sex directly from DOM as fallback
+    if(document.getElementById('sb-w').classList.contains('sel')) profile.sex='w';
+    if(document.getElementById('sb-m').classList.contains('sel')) profile.sex='m';
+    if(!profile.sex){alert('Bitte Geschlecht (Frau oder Mann) antippen.');return;}
+    if(!age||!h||!w){alert('Bitte Alter, Grösse und Gewicht ausfüllen.');return;}
     profile.age=age;profile.height=h;profile.weight=w;profile.target=t||w;
     document.getElementById('goal-list-w').style.display=profile.sex==='w'?'flex':'none';
     document.getElementById('goal-list-m').style.display=profile.sex==='m'?'flex':'none';
@@ -800,6 +818,39 @@ function removeTr(i){today.trainings.splice(i,1);saveAll();render();}
 function setSteps(v){today.steps=parseInt(v)||0;saveAll();render();}
 
 // ── PHOTO / AI ────────────────────────────────────────────────────────
+function handlePhotoClick(){
+  const key=localStorage.getItem('ft_apikey');
+  if(!key){
+    document.getElementById('api-key-notice').style.display='block';
+    return;
+  }
+  document.getElementById('api-key-notice').style.display='none';
+  document.getElementById('file-input').click();
+}
+
+function saveApiKey(){
+  const key=document.getElementById('api-key-input').value.trim();
+  if(!key||!key.startsWith('sk-')){alert('Bitte einen gültigen API-Key eingeben (beginnt mit sk-ant-...)');return;}
+  localStorage.setItem('ft_apikey',key);
+  document.getElementById('api-key-input').value='';
+  updateApiKeyStatus();
+  alert('✅ API-Key gespeichert! Die Foto-Analyse ist jetzt aktiv.');
+}
+
+function deleteApiKey(){
+  if(confirm('API-Key löschen?')){localStorage.removeItem('ft_apikey');updateApiKeyStatus();}}
+
+function updateApiKeyStatus(){
+  const el=document.getElementById('api-key-status');
+  if(!el)return;
+  const key=localStorage.getItem('ft_apikey');
+  if(key){
+    el.innerHTML='<span style="background:var(--green-bg);color:var(--green-text);padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600">✅ API-Key aktiv — Foto-Analyse funktioniert</span>';
+  } else {
+    el.innerHTML='<span style="background:var(--amber-bg);color:var(--amber-text);padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600">⚠️ Kein Key — manuell eingeben</span>';
+  }
+}
+
 async function analyzePhoto(ev){
   const file=ev.target.files[0];if(!file)return;
   const pi=document.getElementById('prev-img');
@@ -817,7 +868,7 @@ async function analyzePhoto(ev){
   try{
     const resp=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{'Content-Type':'application/json','x-api-key':localStorage.getItem('ft_apikey')||'','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
       body:JSON.stringify({
         model:'claude-sonnet-4-6',
         max_tokens:500,
@@ -957,7 +1008,7 @@ function computeStreak(){
 }
 
 // ── PROFILE ───────────────────────────────────────────────────────────
-function renderProfile(){
+function renderProfile(){updateApiKeyStatus();
   const p=profile;const g=goals;
   document.getElementById('prof-avatar').textContent=p.sex==='w'?'👩':'👨';
   document.getElementById('prof-name').textContent=(p.sex==='w'?'Frau':'Mann')+', '+p.age+' J.';

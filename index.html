@@ -195,6 +195,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .burn-preview { background: var(--green-bg); border-radius: 10px; padding: 12px; text-align: center; margin-bottom: 12px; }
 .burn-big { font-size: 28px; font-weight: 700; color: var(--green-text); }
 .burn-lbl { font-size: 12px; color: var(--green); margin-top: 2px; }
+.plate-btn {
+  flex:1;padding:7px 4px;border-radius:8px;border:1.5px solid var(--border-strong);
+  background:var(--surface1);cursor:pointer;font-size:12px;color:var(--text);
+  text-align:center;line-height:1.3;transition:.15s;
+}
+.plate-btn:active{opacity:.7}
+.plate-btn.sel{border-color:var(--accent);background:var(--blue-bg);color:var(--blue-text);}
 .dots-anim { display: inline-flex; gap: 4px; }
 .dots-anim span { width: 6px; height: 6px; border-radius: 50%; background: var(--blue-text); animation: pulse 1s infinite; }
 .dots-anim span:nth-child(2) { animation-delay: .2s; }
@@ -204,6 +211,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .empty-state { text-align: center; padding: 28px 20px; color: var(--text3); }
 .empty-state .ei { font-size: 36px; margin-bottom: 8px; }
 .empty-state .et { font-size: 14px; }
+.hchip { display: inline-block; padding: 5px 11px; border-radius: 20px; background: var(--surface2); border: 1px solid var(--border-strong); font-size: 13px; cursor: pointer; user-select: none; transition: .15s; }
+.hchip:active { background: var(--blue-bg); border-color: var(--accent); color: var(--blue-text); }
+.hint-section { background: var(--surface1); border-radius: 10px; padding: 12px; margin-bottom: 10px; border: 1px solid var(--border); }
+.hint-section-title { font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 8px; text-transform: uppercase; letter-spacing: .4px; }
+.qty-row { display: flex; gap: 7px; margin-bottom: 8px; }
+.qty-btn { padding: 6px 12px; border-radius: 20px; background: var(--surface2); border: 1px solid var(--border-strong); font-size: 13px; cursor: pointer; color: var(--text2); }
+.qty-btn:active { background: var(--blue-bg); color: var(--blue-text); }
 </style>
 </head>
 <body>
@@ -477,6 +491,44 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
     </div>
     <input type="file" id="file-input" accept="image/*" capture="environment" onchange="analyzePhoto(event)">
     <img id="prev-img" class="prev-img">
+
+    <!-- HINT BOX — shown after photo is taken -->
+    <div id="hint-box" style="display:none;margin-bottom:10px">
+      <div style="background:var(--blue-bg);border-radius:10px;padding:12px 13px;margin-bottom:8px">
+        <div style="font-size:12px;font-weight:600;color:var(--blue-text);margin-bottom:8px">💬 Beschreibung hinzufügen — macht KI viel genauer!</div>
+        <div style="display:flex;gap:8px;margin-bottom:8px">
+          <input type="text" id="m-hint"
+            placeholder="z.B. Wassermelone · 6 Kirschen · 3 Haribo..."
+            style="flex:1;padding:9px 11px;border:1px solid var(--border-strong);border-radius:8px;background:var(--surface);color:var(--text);font-size:14px">
+          <button onclick="reanalyze()"
+            style="padding:0 12px;border-radius:8px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-size:13px;font-weight:600;white-space:nowrap">
+            🔄 Neu
+          </button>
+        </div>
+        <div style="font-size:11px;color:var(--blue-text);opacity:.8;margin-bottom:8px">
+          Tipp: Anzahl angeben für genaue Kalorien — z.B. "3 Bonbons", "2 Scheiben Brot", "1 Glas"
+        </div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap">
+          <span onclick="addHint('🍉 Wassermelone')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🍉 Wassermelone</span>
+          <span onclick="addHint('🍓 Erdbeeren')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🍓 Erdbeeren</span>
+          <span onclick="addHint('🍒 Kirschen')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🍒 Kirschen</span>
+          <span onclick="addHint('🍗 Hähnchen')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🍗 Hähnchen</span>
+          <span onclick="addHint('🍚 Reis')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🍚 Reis</span>
+          <span onclick="addHint('🥗 Salat')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🥗 Salat</span>
+          <span onclick="addHint('🍝 Pasta')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🍝 Pasta</span>
+          <span onclick="addHint('🍞 Brot')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🍞 Brot</span>
+          <span onclick="addHint('🥚 Eier')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🥚 Eier</span>
+          <span onclick="addHint('🐟 Lachs')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🐟 Lachs</span>
+          <span onclick="addHint('🥦 Brokkoli')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🥦 Brokkoli</span>
+          <span onclick="addHint('🍌 Banane')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🍌 Banane</span>
+          <span onclick="addHint('🍬 Bonbons')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🍬 Bonbons</span>
+          <span onclick="addHint('🧁 Süssigkeiten')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🧁 Süssigkeiten</span>
+          <span onclick="addHint('🥜 Nüsse')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🥜 Nüsse</span>
+          <span onclick="addHint('🧀 Käse')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🧀 Käse</span>
+        </div>
+      </div>
+    </div>
+
     <div class="ai-loading" id="ai-loading">
       Analysiere Foto <span class="dots-anim"><span></span><span></span><span></span></span>
     </div>
@@ -773,8 +825,11 @@ function changeWater(d){today.water=Math.max(0,Math.min(12,(today.water||0)+d));
 function openMealModal(){
   ['m-name','m-kcal','m-prot','m-carbs','m-fat'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('prev-img').style.display='none';
+  document.getElementById('hint-box').style.display='block';
+  document.getElementById('m-hint').value='';
   document.getElementById('ai-loading').style.display='none';
   document.getElementById('ai-result').style.display='none';
+  window._lastB64=null;
   document.getElementById('meal-modal').classList.add('open');
 }
 
@@ -818,6 +873,181 @@ function removeTr(i){today.trainings.splice(i,1);saveAll();render();}
 function setSteps(v){today.steps=parseInt(v)||0;saveAll();render();}
 
 // ── PHOTO / AI ────────────────────────────────────────────────────────
+function addHint(el){
+  const inp=document.getElementById('m-hint');
+  // strip leading emoji
+  const txt=el.textContent.replace(/^[\u{1F000}-\u{1FFFF}\u{2600}-\u{27FF}\s]+/u,'').trim();
+  inp.value=inp.value?inp.value+', '+txt:txt;
+  inp.focus();
+}
+
+function addQty(el){
+  const inp=document.getElementById('m-hint');
+  const txt=el.textContent.trim();
+  // If there's already text, prepend the quantity before it or append
+  if(inp.value){
+    // Check if value already starts with a number — replace it
+    inp.value=txt+' '+inp.value.replace(/^\d+\s*(Stück|Glas|Teller|Portion|g)?\s*/i,'');
+  } else {
+    inp.value=txt+' ';
+  }
+  inp.focus();
+  inp.setSelectionRange(inp.value.length,inp.value.length);
+}
+
+async function reanalyze(){
+  if(!window._lastB64){alert('Bitte zuerst ein Foto aufnehmen.');return;}
+  const hint=(document.getElementById('m-hint').value||'').trim();
+  document.getElementById('ai-loading').style.display='block';
+  document.getElementById('ai-result').style.display='none';
+  document.getElementById('hint-box').style.display='block';
+  document.getElementById('m-hint').value='';
+  const b64=window._lastB64;
+  const mime=window._lastMime||'image/jpeg';
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':localStorage.getItem('ft_apikey')||'','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:500,
+        messages:[{role:'user',content:[
+          {type:'image',source:{type:'base64',media_type:mime,data:b64}},
+          {type:'text',text:`Analysiere dieses Essen-Foto präzise.${hint?' WICHTIGER HINWEIS VOM NUTZER: '+hint+'. Nutze diese Information als primäre Quelle für die Erkennung — sie ist wichtiger als deine visuelle Schätzung.':''} Schätze Portionsgrösse und Nährwerte exakt. Wenn eine Anzahl oder Menge genannt wird (z.B. "6 Kirschen", "3 Bonbons"), berechne die Nährwerte genau für diese Menge. Antworte NUR im Format: GERICHT|KCAL|PROTEIN|CARBS|FETT (alle Zahlen ohne Einheiten, nur ganze Zahlen). Beispiel: Hähnchenbrust mit Reis|520|42|55|8`}
+        ]}]
+      })
+    });
+    const d=await resp.json();
+    const text=d.content?.find(c=>c.type==='text')?.text||'';
+    const parts=text.trim().split('|');
+    document.getElementById('ai-loading').style.display='none';
+    if(parts.length>=5){
+      document.getElementById('m-name').value=parts[0];
+      document.getElementById('m-kcal').value=parseInt(parts[1])||'';
+      document.getElementById('m-prot').value=parseInt(parts[2])||'';
+      document.getElementById('m-carbs').value=parseInt(parts[3])||'';
+      document.getElementById('m-fat').value=parseInt(parts[4])||'';
+      const res=document.getElementById('ai-result');
+      res.style.display='block';
+      res.style.background='';res.style.color='';
+      res.innerHTML=`✅ <b>${parts[0]}</b> — ${parts[1]} kcal · P:${parts[2]}g · C:${parts[3]}g · F:${parts[4]}g${hint?'<br><small style="opacity:.7">Mit deinem Hinweis: '+hint+'</small>':''}`;
+    } else {
+      const res=document.getElementById('ai-result');
+      res.style.display='block';
+      res.innerHTML='⚠️ Noch unklar — ergänze den Hinweis und versuche es nochmal.';
+    }
+  }catch(e){
+    document.getElementById('ai-loading').style.display='none';
+    document.getElementById('ai-result').style.display='block';
+    document.getElementById('ai-result').innerHTML='❌ Fehler — bitte nochmal versuchen.';
+  }
+}
+
+let lastPhotoB64 = null;
+let lastPhotoType = null;
+
+function addHint(text){
+  const inp = document.getElementById('m-hint');
+  const cur = inp.value.trim();
+  // Add with separator if already has content
+  if(cur && !cur.endsWith('·') && !cur.endsWith(',')) {
+    inp.value = cur + ' · ' + text.replace(/^[^\s]+ /, ''); // strip emoji for cleaner text
+  } else {
+    inp.value = cur ? cur + ' ' + text.replace(/^[^\s]+ /, '') : text.replace(/^[^\s]+ /, '');
+  }
+  inp.focus();
+}
+
+let selectedPlate = null;
+const portionLabels = ['Sehr klein (~30%)', 'Klein (~60%)', 'Mittel (~100%)', 'Gross (~140%)', 'Sehr gross (~180%)'];
+const portionMultipliers = [0.3, 0.6, 1.0, 1.4, 1.8];
+
+function setPlate(size, label){
+  selectedPlate = {size, label};
+  ['xs','s','m','l','bowl'].forEach(s=>{
+    const b=document.getElementById('pb-'+s);
+    if(b) b.className='plate-btn'+(s===size?' sel':'');
+  });
+}
+
+function updatePortionLabel(val){
+  const el=document.getElementById('portion-label');
+  if(el) el.textContent=portionLabels[parseInt(val)-1];
+}
+
+function updateWeightHint(){
+  const w=parseInt(document.getElementById('m-weight-g').value)||0;
+  const el=document.getElementById('weight-hint');
+  if(!el)return;
+  if(w>0) el.textContent='✓ Gewicht wird für präzise Kalorien-Berechnung verwendet';
+  else el.textContent='Ohne Gewicht schätzt die KI anhand Teller & Portion';
+}
+
+function buildPrompt(){
+  const hint = (document.getElementById('m-hint')||{value:''}).value.trim();
+  const weightG = parseInt((document.getElementById('m-weight-g')||{value:''}).value)||0;
+  const portionVal = parseInt((document.getElementById('portion-slider')||{value:'3'}).value)||3;
+  const portionText = portionLabels[portionVal-1];
+  const plate = selectedPlate;
+
+  const base = 'Analysiere dieses Essen-Foto. Antworte NUR im Format: GERICHT|KCAL|PROTEIN|CARBS|FETT (alle Zahlen ohne Einheiten, nur ganze Zahlen). Beispiel: Hähnchenbrust mit Reis|520|42|55|8';
+
+  let extra = '';
+  if(hint) extra += '\nLebensmittel laut Nutzer: ' + hint + '.';
+  if(plate) extra += '\nTellergrösse: ' + plate.label + '.';
+  if(weightG > 0) extra += '\nGEWICHT BEKANNT: ' + weightG + 'g — berechne Kalorien exakt für dieses Gewicht!';
+  else extra += '\nPortionsgrösse: ' + portionText + ' — passe Kalorien entsprechend an.';
+
+  if(extra){
+    return base + '\n\nWICHTIGE ZUSATZINFOS vom Nutzer:' + extra + '\nNutze alle diese Infos für eine möglichst genaue Kalorien-Schätzung.';
+  }
+  return base;
+}
+
+async function reanalyze(){
+  if(!lastPhotoB64){return;}
+  document.getElementById('ai-loading').style.display='block';
+  document.getElementById('ai-result').style.display='none';
+  const key = localStorage.getItem('ft_apikey')||'';
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:500,
+        messages:[{role:'user',content:[
+          {type:'image',source:{type:'base64',media_type:lastPhotoType,data:lastPhotoB64}},
+          {type:'text',text:buildPrompt()}
+        ]}]
+      })
+    });
+    const d=await resp.json();
+    const text=d.content?.find(c=>c.type==='text')?.text||'';
+    const parts=text.trim().split('|');
+    document.getElementById('ai-loading').style.display='none';
+    if(parts.length>=5){
+      document.getElementById('m-name').value=parts[0];
+      document.getElementById('m-kcal').value=parseInt(parts[1])||'';
+      document.getElementById('m-prot').value=parseInt(parts[2])||'';
+      document.getElementById('m-carbs').value=parseInt(parts[3])||'';
+      document.getElementById('m-fat').value=parseInt(parts[4])||'';
+      const res=document.getElementById('ai-result');
+      res.style.display='block';
+      res.style.background='var(--green-bg)';
+      res.style.color='var(--green-text)';
+      res.innerHTML='✅ <b>'+parts[0]+'</b> — '+parts[1]+' kcal · P:'+parts[2]+'g · C:'+parts[3]+'g · F:'+parts[4]+'g<br><small style="opacity:.7">Werte können manuell angepasst werden.</small>';
+    } else {
+      document.getElementById('ai-result').style.display='block';
+      document.getElementById('ai-result').innerHTML='⚠️ Bitte Werte manuell eingeben.';
+    }
+  }catch(e){
+    document.getElementById('ai-loading').style.display='none';
+    document.getElementById('ai-result').style.display='block';
+    document.getElementById('ai-result').innerHTML='❌ Analyse fehlgeschlagen.';
+  }
+}
+
 function handlePhotoClick(){
   const key=localStorage.getItem('ft_apikey');
   if(!key){
@@ -855,8 +1085,11 @@ async function analyzePhoto(ev){
   const file=ev.target.files[0];if(!file)return;
   const pi=document.getElementById('prev-img');
   pi.src=URL.createObjectURL(file);pi.style.display='block';
+  document.getElementById('hint-box').style.display='block';
   document.getElementById('ai-loading').style.display='block';
   document.getElementById('ai-result').style.display='none';
+  document.getElementById('hint-box').style.display='block';
+  document.getElementById('m-hint').value='';
 
   const b64=await new Promise((ok,err)=>{
     const r=new FileReader();
@@ -864,6 +1097,9 @@ async function analyzePhoto(ev){
     r.onerror=err;
     r.readAsDataURL(file);
   });
+  window._lastB64=b64;
+  window._lastMime=file.type||'image/jpeg';
+  const hint=(document.getElementById('m-hint').value||'').trim();
 
   try{
     const resp=await fetch('https://api.anthropic.com/v1/messages',{
@@ -874,7 +1110,7 @@ async function analyzePhoto(ev){
         max_tokens:500,
         messages:[{role:'user',content:[
           {type:'image',source:{type:'base64',media_type:file.type||'image/jpeg',data:b64}},
-          {type:'text',text:'Analysiere dieses Essen-Foto. Schätze Portionsgrösse und Nährwerte. Antworte NUR im Format: GERICHT|KCAL|PROTEIN|CARBS|FETT (alle Zahlen ohne Einheiten, nur ganze Zahlen). Beispiel: Hähnchenbrust mit Reis|520|42|55|8'}
+          {type:'text',text:`Analysiere dieses Essen-Foto präzise.${hint ? ' WICHTIGER HINWEIS VOM NUTZER: '+hint+'. Nutze diese Information als primäre Quelle für die Erkennung — sie ist wichtiger als deine visuelle Schätzung.' : ''} Schätze Portionsgrösse und Nährwerte exakt. Wenn eine Anzahl oder Menge genannt wird (z.B. "6 Kirschen", "3 Bonbons"), berechne die Nährwerte genau für diese Menge. Antworte NUR im Format: GERICHT|KCAL|PROTEIN|CARBS|FETT (alle Zahlen ohne Einheiten, nur ganze Zahlen). Beispiel: Hähnchenbrust mit Reis|520|42|55|8`}
         ]}]
       })
     });
@@ -890,7 +1126,9 @@ async function analyzePhoto(ev){
       document.getElementById('m-fat').value=parseInt(parts[4])||'';
       const res=document.getElementById('ai-result');
       res.style.display='block';
-      res.innerHTML=`✅ <b>${parts[0]}</b> erkannt — ${parts[1]} kcal · P:${parts[2]}g · C:${parts[3]}g · F:${parts[4]}g<br><small style="opacity:.7">Werte können manuell angepasst werden.</small>`;
+      res.style.background='';res.style.color='';
+      const hint2=(document.getElementById('m-hint').value||'').trim();
+      res.innerHTML=`✅ <b>${parts[0]}</b> — ${parts[1]} kcal · P:${parts[2]}g · C:${parts[3]}g · F:${parts[4]}g${hint2?'<br><small style="opacity:.7">Mit Hinweis: '+hint2+'</small>':'<br><small style="opacity:.7">Werte können angepasst werden</small>'}`;
     } else {
       document.getElementById('ai-result').style.display='block';
       document.getElementById('ai-result').innerHTML='⚠️ Foto unklar — bitte Werte manuell eingeben.';

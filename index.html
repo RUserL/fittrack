@@ -484,29 +484,57 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
     <div id="api-key-notice" style="display:none;background:var(--amber-bg);border-radius:10px;padding:11px 13px;margin-bottom:10px;font-size:13px;color:var(--amber-text)">
       ⚠️ Kein API-Key. Geh zu <b>Profil → API-Key eingeben</b> um die Foto-Analyse zu aktivieren.
     </div>
-    <div class="photo-zone" onclick="handlePhotoClick()">
-      <div class="pz-icon">📷</div>
-      <div class="pz-text">Foto aufnehmen oder hochladen</div>
-      <div class="pz-sub">Claude erkennt Kalorien & Nährwerte automatisch</div>
+    <!-- Text-only search -->
+    <div style="margin-bottom:10px">
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px">🔍 Produkt oder Gericht eingeben</div>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="text-search"
+          placeholder="z.B. Migros High Protein Coffee, Banana..."
+          style="flex:1;padding:10px 12px;border:1px solid var(--border-strong);border-radius:8px;background:var(--surface1);color:var(--text);font-size:14px"
+          onkeydown="if(event.key==='Enter')analyzeText()">
+        <button onclick="analyzeText()"
+          style="padding:0 14px;border-radius:8px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-size:20px;flex-shrink:0">🔍</button>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px">KI kennt Schweizer Produkte, Migros, Coop, Standardgerichte etc.</div>
     </div>
-    <input type="file" id="file-input" accept="image/*" capture="environment" onchange="analyzePhoto(event)">
+
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <div style="flex:1;height:0.5px;background:var(--border)"></div>
+      <div style="font-size:12px;color:var(--text3);font-weight:500">ODER FOTO</div>
+      <div style="flex:1;height:0.5px;background:var(--border)"></div>
+    </div>
+
+    <!-- Camera + Gallery buttons -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+      <div class="photo-zone" onclick="document.getElementById('file-camera').click()" style="margin-bottom:0;padding:14px 10px">
+        <div class="pz-icon" style="font-size:24px">📷</div>
+        <div class="pz-text" style="font-size:13px">Kamera</div>
+        <div class="pz-sub">Foto aufnehmen</div>
+      </div>
+      <div class="photo-zone" onclick="document.getElementById('file-gallery').click()" style="margin-bottom:0;padding:14px 10px">
+        <div class="pz-icon" style="font-size:24px">🖼️</div>
+        <div class="pz-text" style="font-size:13px">Galerie</div>
+        <div class="pz-sub">Bild hochladen</div>
+      </div>
+    </div>
+    <input type="file" id="file-camera" accept="image/*" capture="environment" onchange="analyzePhoto(event)" style="display:none">
+    <input type="file" id="file-gallery" accept="image/*" onchange="analyzePhoto(event)" style="display:none">
     <img id="prev-img" class="prev-img">
 
     <!-- HINT BOX — shown after photo is taken -->
     <div id="hint-box" style="display:none;margin-bottom:10px">
       <div style="background:var(--blue-bg);border-radius:10px;padding:12px 13px;margin-bottom:8px">
         <div style="font-size:12px;font-weight:600;color:var(--blue-text);margin-bottom:8px">💬 Beschreibung hinzufügen — macht KI viel genauer!</div>
-        <div style="display:flex;gap:8px;margin-bottom:8px">
-          <input type="text" id="m-hint"
-            placeholder="z.B. Wassermelone · 6 Kirschen · 3 Haribo..."
-            style="flex:1;padding:9px 11px;border:1px solid var(--border-strong);border-radius:8px;background:var(--surface);color:var(--text);font-size:14px">
-          <button onclick="reanalyze()"
-            style="padding:0 12px;border-radius:8px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-size:13px;font-weight:600;white-space:nowrap">
-            🔄 Neu
-          </button>
-        </div>
+        <input type="text" id="m-hint"
+          placeholder="z.B. Wassermelone · 6 Kirschen · 3 Haribo..."
+          style="width:100%;padding:10px 12px;border:1px solid var(--border-strong);border-radius:8px;background:var(--surface);color:var(--text);font-size:14px;margin-bottom:8px"
+          onkeydown="if(event.key==='Enter')reanalyze()">
+        <button onclick="reanalyze()"
+          style="width:100%;padding:11px;border-radius:8px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-size:14px;font-weight:600;margin-bottom:8px">
+          🔄 Mit Beschreibung neu analysieren
+        </button>
         <div style="font-size:11px;color:var(--blue-text);opacity:.8;margin-bottom:8px">
-          Tipp: Anzahl angeben für genaue Kalorien — z.B. "3 Bonbons", "2 Scheiben Brot", "1 Glas"
+          Tipp: Anzahl angeben — z.B. "3 Bonbons", "2 Scheiben Brot", "1 Glas Wassermelone"
         </div>
         <div style="display:flex;gap:5px;flex-wrap:wrap">
           <span onclick="addHint('🍉 Wassermelone')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🍉 Wassermelone</span>
@@ -1055,7 +1083,57 @@ function handlePhotoClick(){
     return;
   }
   document.getElementById('api-key-notice').style.display='none';
-  document.getElementById('file-input').click();
+  document.getElementById('file-gallery').click();
+}
+
+async function analyzeText(){
+  const txt=(document.getElementById('text-search').value||'').trim();
+  if(!txt){alert('Bitte Produkt oder Gericht eingeben.');return;}
+  const key=localStorage.getItem('ft_apikey')||'';
+  if(!key){alert('Bitte zuerst API-Key im Profil eingeben.');return;}
+  document.getElementById('ai-loading').style.display='block';
+  document.getElementById('ai-result').style.display='none';
+  document.getElementById('hint-box').style.display='none';
+  document.getElementById('prev-img').style.display='none';
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:500,
+        messages:[{role:'user',content:[{type:'text',text:
+          'Nährwerte für: "'+txt+'" (Schweizer Produkte bevorzugt, falls bekannt). Wenn es ein bekanntes Produkt ist, gib die exakten Nährwerte. Antworte NUR im Format: NAME|KCAL|PROTEIN|CARBS|FETT (ganze Zahlen). Beispiel: Migros High Protein Coffee|164|19|15|3'
+        }]}]
+      })
+    });
+    const d=await resp.json();
+    const text=d.content?.find(c=>c.type==='text')?.text||'';
+    const parts=text.trim().split('|');
+    document.getElementById('ai-loading').style.display='none';
+    if(parts.length>=5){
+      document.getElementById('m-name').value=parts[0];
+      document.getElementById('m-kcal').value=parseInt(parts[1])||'';
+      document.getElementById('m-prot').value=parseInt(parts[2])||'';
+      document.getElementById('m-carbs').value=parseInt(parts[3])||'';
+      document.getElementById('m-fat').value=parseInt(parts[4])||'';
+      const res=document.getElementById('ai-result');
+      res.style.display='block';
+      res.style.background='var(--green-bg)';
+      res.style.color='var(--green-text)';
+      res.innerHTML='✅ <b>'+parts[0]+'</b> — '+parts[1]+' kcal · P:'+parts[2]+'g · C:'+parts[3]+'g · F:'+parts[4]+'g<br><small style="opacity:.7">Werte können manuell angepasst werden.</small>';
+    } else {
+      const res=document.getElementById('ai-result');
+      res.style.display='block';
+      res.style.background='var(--amber-bg)';
+      res.style.color='var(--amber-text)';
+      res.innerHTML='⚠️ Produkt nicht gefunden — Werte manuell eingeben.';
+    }
+  }catch(e){
+    document.getElementById('ai-loading').style.display='none';
+    document.getElementById('ai-result').style.display='block';
+    document.getElementById('ai-result').innerHTML='❌ Fehler — manuell eingeben.';
+  }
 }
 
 function saveApiKey(){
@@ -1083,6 +1161,7 @@ function updateApiKeyStatus(){
 
 async function analyzePhoto(ev){
   const file=ev.target.files[0];if(!file)return;
+  document.getElementById('text-search').value='';
   const pi=document.getElementById('prev-img');
   pi.src=URL.createObjectURL(file);pi.style.display='block';
   document.getElementById('hint-box').style.display='block';

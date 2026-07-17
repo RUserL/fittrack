@@ -7,33 +7,100 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="FitTrack">
 <meta name="theme-color" content="#ffffff">
-<title>FitTrack – Fitness & Ernährung</title>
+<title>健康トラック — FitTrack Japan</title>
 <style>
 :root {
-  --blue: #185FA5; --blue-bg: #E6F1FB; --blue-text: #0C447C;
-  --green: #3B6D11; --green-bg: #EAF3DE; --green-text: #27500A;
-  --amber: #854F0B; --amber-bg: #FAEEDA; --amber-text: #633806;
-  --red: #A32D2D; --red-bg: #FCEBEB; --red-text: #791F1F;
-  --gray: #5F5E5A; --gray-bg: #F1EFE8;
-  --surface: #ffffff; --surface1: #f8f8f6; --surface2: #f1efe8;
-  --border: rgba(0,0,0,0.1); --border-strong: rgba(0,0,0,0.18);
-  --text: #1a1a18; --text2: #5f5e5a; --text3: #888780;
-  --radius: 8px; --accent: #185FA5;
+  /* Japanese Theme — Wa (和) */
+  --accent: #C0392B;          /* Torii red */
+  --blue: #C0392B;
+  --blue-bg: #FDEAEA;
+  --blue-text: #922B21;
+  --green: #2E7D4F;
+  --green-bg: #E8F5EE;
+  --green-text: #1B5E37;
+  --amber: #B7791F;
+  --amber-bg: #FEF3E2;
+  --amber-text: #7D4F0F;
+  --red: #C0392B;
+  --red-bg: #FDEAEA;
+  --red-text: #922B21;
+  --gray: #6B6057;
+  --gray-bg: #F5F0EC;
+  --surface: #FFFDF9;
+  --surface1: #FDF6EE;
+  --surface2: #F5EDE3;
+  --border: rgba(139,90,60,0.12);
+  --border-strong: rgba(139,90,60,0.25);
+  --text: #2C1810;
+  --text2: #6B5A52;
+  --text3: #9B8880;
+  --radius: 6px;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --surface: #1e1e1c; --surface1: #282826; --surface2: #323230;
-    --border: rgba(255,255,255,0.1); --border-strong: rgba(255,255,255,0.18);
-    --text: #f0efe8; --text2: #a8a79f; --text3: #6a6a62;
-    --blue-bg: #0c2a4a; --blue-text: #85b7eb;
-    --green-bg: #1a2e0a; --green-text: #97c459;
-    --amber-bg: #2e1e04; --amber-text: #ef9f27;
-    --red-bg: #2e0f0f; --red-text: #f09595;
-    --gray-bg: #2a2a28;
+    --surface: #1A1210; --surface1: #241816; --surface2: #2E201C;
+    --border: rgba(255,180,150,0.1); --border-strong: rgba(255,180,150,0.2);
+    --text: #F5EDE3; --text2: #C4A898; --text3: #8A7060;
+    --blue-bg: #3D1515; --blue-text: #F1948A;
+    --green-bg: #0F2A1A; --green-text: #7DCEA0;
+    --amber-bg: #2D1F08; --amber-text: #F0B55F;
+    --red-bg: #3D1515; --red-text: #F1948A;
+    --gray-bg: #2A201C;
+    --accent: #E74C3C;
   }
 }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--surface1); color: var(--text); min-height: 100vh; }
+
+/* Japanese decorative elements */
+.topbar {
+  background: linear-gradient(135deg, #C0392B 0%, #922B21 100%) !important;
+  border-bottom: none !important;
+}
+.topbar .app-title { color: #fff !important; font-weight: 700; letter-spacing: 1px; }
+.date-chip { background: rgba(255,255,255,0.2) !important; color: #fff !important; border-color: rgba(255,255,255,0.3) !important; }
+.tab-bar { border-top: 2px solid #C0392B !important; }
+.tab.active { color: #C0392B !important; }
+.btn-main { background: linear-gradient(135deg, #C0392B, #E74C3C) !important; }
+.sex-btn.sel { border-color: #C0392B !important; background: #FDEAEA !important; color: #922B21 !important; }
+.goal-btn.sel { border-color: #C0392B !important; background: #FDEAEA !important; }
+.goal-btn.sel .gt { color: #922B21 !important; }
+.act-btn.sel { border-color: #C0392B !important; background: #FDEAEA !important; color: #922B21 !important; }
+.prog-fill { border-radius: 4px !important; }
+.card { border-radius: 10px !important; border-left: 3px solid #C0392B !important; }
+.add-row { border-color: #C0392B !important; color: #C0392B !important; }
+.add-row:active { background: #FDEAEA !important; }
+.btn-add { background: linear-gradient(135deg, #C0392B, #E74C3C) !important; }
+.photo-zone { border-color: #C0392B !important; }
+.ai-badge { background: #FDEAEA !important; color: #922B21 !important; }
+.wdrop.on { filter: hue-rotate(0deg); }
+.modal { border-radius: 20px 20px 0 0 !important; border-top: 4px solid #C0392B !important; }
+.plate-btn.sel { border-color: #C0392B !important; background: #FDEAEA !important; color: #922B21 !important; }
+.b-ok { background: #E8F5EE !important; color: #1B5E37 !important; }
+.streak-bar { background: linear-gradient(135deg, #FDEAEA, #FEF3E2) !important; border-left: 3px solid #C0392B !important; }
+.streak-num { color: #C0392B !important; }
+.tip-box { border-left-color: #C0392B !important; background: #FDEAEA !important; color: #922B21 !important; }
+.dcell.is-today { border-color: #C0392B !important; }
+.dcell.is-sel { background: #FDEAEA !important; border-color: #C0392B !important; }
+.dcell.all-ok { background: #E8F5EEaa !important; }
+.dcell.all-ok .dnum { color: #1B5E37 !important; }
+.cal-nav-btn { border-color: rgba(139,90,60,0.25) !important; }
+input:focus, select:focus { border-color: #C0392B !important; box-shadow: 0 0 0 2px rgba(192,57,43,0.1); }
+.on-logo::after { content: " 🌸"; }
+
+/* Sakura decoration on home */
+#pg-home::before {
+  content: "🌸　　　🌸　　🌸";
+  display: block;
+  text-align: center;
+  font-size: 18px;
+  letter-spacing: 8px;
+  padding: 10px 0 4px;
+  opacity: 0.6;
+}
+/* Japanese pattern border on cards */
+.card-label { color: #C0392B !important; }
+
 
 /* ONBOARDING */
 #onboard { display: flex; flex-direction: column; min-height: 100vh; padding: 24px 20px 40px; background: var(--surface); max-width: 480px; margin: 0 auto; }
@@ -223,19 +290,68 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 <body>
 
 <!-- ═══════════════ ONBOARDING ═══════════════ -->
+<!-- Sakura floating petals -->
+<div id="sakura-container" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden"></div>
+
+<style>
+@keyframes sakura-fall {
+  0%   { transform: translateY(-20px) rotate(0deg) translateX(0); opacity:1; }
+  50%  { transform: translateY(45vh) rotate(180deg) translateX(30px); opacity:0.8; }
+  100% { transform: translateY(100vh) rotate(360deg) translateX(-20px); opacity:0; }
+}
+.petal {
+  position:absolute;
+  font-size:16px;
+  animation: sakura-fall linear infinite;
+  opacity:0.7;
+  user-select:none;
+}
+/* Japanese wave pattern background */
+body::before {
+  content:'';
+  position:fixed;
+  top:0;left:0;width:100%;height:100%;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 30 Q15 15 30 30 Q45 45 60 30' fill='none' stroke='%23C0392B' stroke-width='0.4' opacity='0.08'/%3E%3C/svg%3E");
+  background-size: 60px 60px;
+  pointer-events:none;
+  z-index:0;
+}
+#onboard, #mainapp { position:relative; z-index:1; }
+</style>
+
+<script>
+// Spawn sakura petals
+function spawnPetals(){
+  const c=document.getElementById('sakura-container');
+  const petals=['🌸','🌺','🌷'];
+  for(let i=0;i<8;i++){
+    const p=document.createElement('div');
+    p.className='petal';
+    p.textContent=petals[i%petals.length];
+    p.style.left=Math.random()*100+'%';
+    p.style.animationDuration=(8+Math.random()*10)+'s';
+    p.style.animationDelay=(Math.random()*12)+'s';
+    p.style.fontSize=(10+Math.random()*10)+'px';
+    p.style.opacity=(0.2+Math.random()*0.4);
+    c.appendChild(p);
+  }
+}
+window.addEventListener('load', spawnPetals);
+</script>
+
 <div id="onboard">
 
   <!-- Step 1: Sex + Body -->
   <div class="on-step active" id="s1">
-    <div class="on-logo">💪</div>
+    <div class="on-logo">⛩️</div>
     <div class="on-title">Willkommen bei FitTrack</div>
-    <div class="on-sub">Richte dein persönliches Profil ein — dauert nur 1 Minute.</div>
+    <div class="on-sub">道を歩み始めよう — Starte deinen Weg</div>
     <div class="sex-grid">
       <button class="sex-btn" id="sb-w" onclick="setSex('w')">
-        <span class="sex-icon">👩</span>Frau
+        <span class="sex-icon">🌸</span>Frau
       </button>
       <button class="sex-btn" id="sb-m" onclick="setSex('m')">
-        <span class="sex-icon">👨</span>Mann
+        <span class="sex-icon">⛩️</span>Mann
       </button>
     </div>
     <div class="inp-2">
@@ -290,7 +406,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 <div id="mainapp">
   <div class="topbar">
     <div class="topbar-inner">
-      <div class="app-title">💪 FitTrack</div>
+      <div style="display:flex;flex-direction:column"><div class="app-title">🌸 FitTrack</div><div style="font-size:10px;color:rgba(255,255,255,0.75);letter-spacing:2px;margin-top:-2px">健 康 管 理</div></div>
       <div class="date-chip" id="today-label"></div>
     </div>
   </div>
@@ -457,19 +573,19 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
   <!-- TAB BAR -->
   <nav class="tab-bar">
     <button class="tab active" id="tb-home" onclick="showPage('home')">
-      <span class="ti">🏠</span>Heute
+      <span class="ti">🏯</span>Heute
     </button>
     <button class="tab" id="tb-meals" onclick="showPage('meals')">
-      <span class="ti">🥗</span>Essen
+      <span class="ti">🍱</span>Essen
     </button>
     <button class="tab" id="tb-training" onclick="showPage('training')">
-      <span class="ti">🏋️</span>Training
+      <span class="ti">⛩️</span>Training
     </button>
     <button class="tab" id="tb-calendar" onclick="showPage('calendar')">
-      <span class="ti">📅</span>Kalender
+      <span class="ti">🌸</span>Kalender
     </button>
     <button class="tab" id="tb-profile" onclick="showPage('profile')">
-      <span class="ti">👤</span>Profil
+      <span class="ti">🎌</span>Profil
     </button>
   </nav>
 </div>
@@ -529,30 +645,30 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
           placeholder="z.B. Wassermelone · 6 Kirschen · 3 Haribo..."
           style="width:100%;padding:10px 12px;border:1px solid var(--border-strong);border-radius:8px;background:var(--surface);color:var(--text);font-size:14px;margin-bottom:8px"
           onkeydown="if(event.key==='Enter')reanalyze()">
-        <button onclick="reanalyze()"
-          style="width:100%;padding:11px;border-radius:8px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-size:14px;font-weight:600;margin-bottom:8px">
-          🔄 Mit Beschreibung neu analysieren
+        <button onclick="runAnalysis()"
+          style="width:100%;padding:13px;border-radius:10px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-size:15px;font-weight:700;margin-bottom:8px;letter-spacing:.2px">
+          ✨ Jetzt analysieren
         </button>
         <div style="font-size:11px;color:var(--blue-text);opacity:.8;margin-bottom:8px">
           Tipp: Anzahl angeben — z.B. "3 Bonbons", "2 Scheiben Brot", "1 Glas Wassermelone"
         </div>
         <div style="display:flex;gap:5px;flex-wrap:wrap">
-          <span onclick="addHint('🍉 Wassermelone')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🍉 Wassermelone</span>
-          <span onclick="addHint('🍓 Erdbeeren')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🍓 Erdbeeren</span>
-          <span onclick="addHint('🍒 Kirschen')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🍒 Kirschen</span>
-          <span onclick="addHint('🍗 Hähnchen')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🍗 Hähnchen</span>
-          <span onclick="addHint('🍚 Reis')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🍚 Reis</span>
-          <span onclick="addHint('🥗 Salat')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🥗 Salat</span>
-          <span onclick="addHint('🍝 Pasta')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🍝 Pasta</span>
-          <span onclick="addHint('🍞 Brot')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🍞 Brot</span>
-          <span onclick="addHint('🥚 Eier')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🥚 Eier</span>
-          <span onclick="addHint('🐟 Lachs')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🐟 Lachs</span>
-          <span onclick="addHint('🥦 Brokkoli')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🥦 Brokkoli</span>
-          <span onclick="addHint('🍌 Banane')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🍌 Banane</span>
-          <span onclick="addHint('🍬 Bonbons')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🍬 Bonbons</span>
-          <span onclick="addHint('🧁 Süssigkeiten')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🧁 Süssigkeiten</span>
-          <span onclick="addHint('🥜 Nüsse')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🥜 Nüsse</span>
-          <span onclick="addHint('🧀 Käse')" style="background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer">🧀 Käse</span>
+          <span onclick="addHint('🍉 Wassermelone')" style="background:var(--surface);border:1px solid #C0392B33;border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer;color:var(--text)">🍉 Wassermelone</span>
+          <span onclick="addHint('🍓 Erdbeeren')" style="background:var(--surface);border:1px solid #C0392B33;border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer;color:var(--text)">🍓 Erdbeeren</span>
+          <span onclick="addHint('🍒 Kirschen')" style="background:var(--surface);border:1px solid #C0392B33;border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer;color:var(--text)">🍒 Kirschen</span>
+          <span onclick="addHint('🍗 Hähnchen')" style="background:var(--surface);border:1px solid #C0392B33;border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer;color:var(--text)">🍗 Hähnchen</span>
+          <span onclick="addHint('🍚 Reis')" style="background:var(--surface);border:1px solid #C0392B33;border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer;color:var(--text)">🍚 Reis</span>
+          <span onclick="addHint('🥗 Salat')" style="background:var(--surface);border:1px solid #C0392B33;border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer;color:var(--text)">🥗 Salat</span>
+          <span onclick="addHint('🍝 Pasta')" style="background:var(--surface);border:1px solid #C0392B33;border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer;color:var(--text)">🍝 Pasta</span>
+          <span onclick="addHint('🍞 Brot')" style="background:var(--surface);border:1px solid #C0392B33;border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer;color:var(--text)">🍞 Brot</span>
+          <span onclick="addHint('🥚 Eier')" style="background:var(--surface);border:1px solid #C0392B33;border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer;color:var(--text)">🥚 Eier</span>
+          <span onclick="addHint('🐟 Lachs')" style="background:var(--surface);border:1px solid #C0392B33;border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer;color:var(--text)">🐟 Lachs</span>
+          <span onclick="addHint('🥦 Brokkoli')" style="background:var(--surface);border:1px solid #C0392B33;border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer;color:var(--text)">🥦 Brokkoli</span>
+          <span onclick="addHint('🍌 Banane')" style="background:var(--surface);border:1px solid #C0392B33;border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer;color:var(--text)">🍌 Banane</span>
+          <span onclick="addHint('🍬 Bonbons')" style="background:var(--surface);border:1px solid #C0392B33;border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer;color:var(--text)">🍬 Bonbons</span>
+          <span onclick="addHint('🧁 Süssigkeiten')" style="background:var(--surface);border:1px solid #C0392B33;border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer;color:var(--text)">🧁 Süssigkeiten</span>
+          <span onclick="addHint('🥜 Nüsse')" style="background:var(--surface);border:1px solid #C0392B33;border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer;color:var(--text)">🥜 Nüsse</span>
+          <span onclick="addHint('🧀 Käse')" style="background:var(--surface);border:1px solid #C0392B33;border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer;color:var(--text)">🧀 Käse</span>
         </div>
       </div>
     </div>
@@ -800,7 +916,7 @@ function render(){
   const ml=document.getElementById('meal-list');
   ml.innerHTML='';
   if(!today.meals.length){
-    ml.innerHTML='<div class="empty-state"><div class="ei">🍽️</div><div class="et">Noch keine Mahlzeiten — füge deine erste hinzu!</div></div>';
+    ml.innerHTML='<div class="empty-state"><div class="ei">🍱</div><div class="et">Noch keine Mahlzeiten — füge deine erste hinzu!</div></div>';
   }
   today.meals.forEach((m,i)=>{
     const div=document.createElement('div');div.className='row-item';
@@ -822,7 +938,7 @@ function render(){
   const tl=document.getElementById('tr-list');
   tl.innerHTML='';
   if(!today.trainings.length){
-    tl.innerHTML='<div class="empty-state"><div class="ei">🏋️</div><div class="et">Noch kein Training eingetragen.</div></div>';
+    tl.innerHTML='<div class="empty-state"><div class="ei">🥋</div><div class="et">Noch kein Training eingetragen.</div></div>';
   }
   today.trainings.forEach((tr,i)=>{
     const div=document.createElement('div');div.className='row-item';
@@ -923,120 +1039,13 @@ function addQty(el){
   inp.setSelectionRange(inp.value.length,inp.value.length);
 }
 
-async function reanalyze(){
-  if(!window._lastB64){alert('Bitte zuerst ein Foto aufnehmen.');return;}
-  const hint=(document.getElementById('m-hint').value||'').trim();
+
+async function runAnalysis(){
+  const key=localStorage.getItem('ft_apikey')||'';
+  if(!key){alert('Bitte zuerst API-Key im Profil eingeben.');return;}
+  if(!lastPhotoB64){alert('Bitte zuerst ein Foto aufnehmen oder aus der Galerie wählen.');return;}
   document.getElementById('ai-loading').style.display='block';
   document.getElementById('ai-result').style.display='none';
-  document.getElementById('hint-box').style.display='block';
-  document.getElementById('m-hint').value='';
-  const b64=window._lastB64;
-  const mime=window._lastMime||'image/jpeg';
-  try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':localStorage.getItem('ft_apikey')||'','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-6',
-        max_tokens:500,
-        messages:[{role:'user',content:[
-          {type:'image',source:{type:'base64',media_type:mime,data:b64}},
-          {type:'text',text:`Analysiere dieses Essen-Foto präzise.${hint?' WICHTIGER HINWEIS VOM NUTZER: '+hint+'. Nutze diese Information als primäre Quelle für die Erkennung — sie ist wichtiger als deine visuelle Schätzung.':''} Schätze Portionsgrösse und Nährwerte exakt. Wenn eine Anzahl oder Menge genannt wird (z.B. "6 Kirschen", "3 Bonbons"), berechne die Nährwerte genau für diese Menge. Antworte NUR im Format: GERICHT|KCAL|PROTEIN|CARBS|FETT (alle Zahlen ohne Einheiten, nur ganze Zahlen). Beispiel: Hähnchenbrust mit Reis|520|42|55|8`}
-        ]}]
-      })
-    });
-    const d=await resp.json();
-    const text=d.content?.find(c=>c.type==='text')?.text||'';
-    const parts=text.trim().split('|');
-    document.getElementById('ai-loading').style.display='none';
-    if(parts.length>=5){
-      document.getElementById('m-name').value=parts[0];
-      document.getElementById('m-kcal').value=parseInt(parts[1])||'';
-      document.getElementById('m-prot').value=parseInt(parts[2])||'';
-      document.getElementById('m-carbs').value=parseInt(parts[3])||'';
-      document.getElementById('m-fat').value=parseInt(parts[4])||'';
-      const res=document.getElementById('ai-result');
-      res.style.display='block';
-      res.style.background='';res.style.color='';
-      res.innerHTML=`✅ <b>${parts[0]}</b> — ${parts[1]} kcal · P:${parts[2]}g · C:${parts[3]}g · F:${parts[4]}g${hint?'<br><small style="opacity:.7">Mit deinem Hinweis: '+hint+'</small>':''}`;
-    } else {
-      const res=document.getElementById('ai-result');
-      res.style.display='block';
-      res.innerHTML='⚠️ Noch unklar — ergänze den Hinweis und versuche es nochmal.';
-    }
-  }catch(e){
-    document.getElementById('ai-loading').style.display='none';
-    document.getElementById('ai-result').style.display='block';
-    document.getElementById('ai-result').innerHTML='❌ Fehler — bitte nochmal versuchen.';
-  }
-}
-
-let lastPhotoB64 = null;
-let lastPhotoType = null;
-
-function addHint(text){
-  const inp = document.getElementById('m-hint');
-  const cur = inp.value.trim();
-  // Add with separator if already has content
-  if(cur && !cur.endsWith('·') && !cur.endsWith(',')) {
-    inp.value = cur + ' · ' + text.replace(/^[^\s]+ /, ''); // strip emoji for cleaner text
-  } else {
-    inp.value = cur ? cur + ' ' + text.replace(/^[^\s]+ /, '') : text.replace(/^[^\s]+ /, '');
-  }
-  inp.focus();
-}
-
-let selectedPlate = null;
-const portionLabels = ['Sehr klein (~30%)', 'Klein (~60%)', 'Mittel (~100%)', 'Gross (~140%)', 'Sehr gross (~180%)'];
-const portionMultipliers = [0.3, 0.6, 1.0, 1.4, 1.8];
-
-function setPlate(size, label){
-  selectedPlate = {size, label};
-  ['xs','s','m','l','bowl'].forEach(s=>{
-    const b=document.getElementById('pb-'+s);
-    if(b) b.className='plate-btn'+(s===size?' sel':'');
-  });
-}
-
-function updatePortionLabel(val){
-  const el=document.getElementById('portion-label');
-  if(el) el.textContent=portionLabels[parseInt(val)-1];
-}
-
-function updateWeightHint(){
-  const w=parseInt(document.getElementById('m-weight-g').value)||0;
-  const el=document.getElementById('weight-hint');
-  if(!el)return;
-  if(w>0) el.textContent='✓ Gewicht wird für präzise Kalorien-Berechnung verwendet';
-  else el.textContent='Ohne Gewicht schätzt die KI anhand Teller & Portion';
-}
-
-function buildPrompt(){
-  const hint = (document.getElementById('m-hint')||{value:''}).value.trim();
-  const weightG = parseInt((document.getElementById('m-weight-g')||{value:''}).value)||0;
-  const portionVal = parseInt((document.getElementById('portion-slider')||{value:'3'}).value)||3;
-  const portionText = portionLabels[portionVal-1];
-  const plate = selectedPlate;
-
-  const base = 'Analysiere dieses Essen-Foto. Antworte NUR im Format: GERICHT|KCAL|PROTEIN|CARBS|FETT (alle Zahlen ohne Einheiten, nur ganze Zahlen). Beispiel: Hähnchenbrust mit Reis|520|42|55|8';
-
-  let extra = '';
-  if(hint) extra += '\nLebensmittel laut Nutzer: ' + hint + '.';
-  if(plate) extra += '\nTellergrösse: ' + plate.label + '.';
-  if(weightG > 0) extra += '\nGEWICHT BEKANNT: ' + weightG + 'g — berechne Kalorien exakt für dieses Gewicht!';
-  else extra += '\nPortionsgrösse: ' + portionText + ' — passe Kalorien entsprechend an.';
-
-  if(extra){
-    return base + '\n\nWICHTIGE ZUSATZINFOS vom Nutzer:' + extra + '\nNutze alle diese Infos für eine möglichst genaue Kalorien-Schätzung.';
-  }
-  return base;
-}
-
-async function reanalyze(){
-  if(!lastPhotoB64){return;}
-  document.getElementById('ai-loading').style.display='block';
-  document.getElementById('ai-result').style.display='none';
-  const key = localStorage.getItem('ft_apikey')||'';
   try{
     const resp=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
@@ -1064,27 +1073,28 @@ async function reanalyze(){
       res.style.display='block';
       res.style.background='var(--green-bg)';
       res.style.color='var(--green-text)';
-      res.innerHTML='✅ <b>'+parts[0]+'</b> — '+parts[1]+' kcal · P:'+parts[2]+'g · C:'+parts[3]+'g · F:'+parts[4]+'g<br><small style="opacity:.7">Werte können manuell angepasst werden.</small>';
+      res.innerHTML='✅ <b>'+parts[0]+'</b> — '+parts[1]+' kcal · P:'+parts[2]+'g · C:'+parts[3]+'g · F:'+parts[4]+'g<br><small style="opacity:.7">Falsch? Beschreibung ändern und nochmals analysieren.</small>';
     } else {
-      document.getElementById('ai-result').style.display='block';
-      document.getElementById('ai-result').innerHTML='⚠️ Bitte Werte manuell eingeben.';
+      const res=document.getElementById('ai-result');
+      res.style.display='block';
+      res.style.background='var(--amber-bg)';
+      res.style.color='var(--amber-text)';
+      res.innerHTML='⚠️ Nicht erkannt — Beschreibung hinzufügen und nochmals analysieren, oder Werte manuell eingeben.';
     }
   }catch(e){
     document.getElementById('ai-loading').style.display='none';
-    document.getElementById('ai-result').style.display='block';
-    document.getElementById('ai-result').innerHTML='❌ Analyse fehlgeschlagen.';
+    const res=document.getElementById('ai-result');
+    res.style.display='block';
+    res.style.background='var(--red-bg)';
+    res.style.color='var(--red-text)';
+    res.innerHTML='❌ Fehler — Werte manuell eingeben.';
   }
 }
 
-function handlePhotoClick(){
-  const key=localStorage.getItem('ft_apikey');
-  if(!key){
-    document.getElementById('api-key-notice').style.display='block';
-    return;
-  }
-  document.getElementById('api-key-notice').style.display='none';
-  document.getElementById('file-gallery').click();
+async function reanalyze(){
+  runAnalysis();
 }
+
 
 async function analyzeText(){
   const txt=(document.getElementById('text-search').value||'').trim();
@@ -1327,7 +1337,7 @@ function computeStreak(){
 // ── PROFILE ───────────────────────────────────────────────────────────
 function renderProfile(){updateApiKeyStatus();
   const p=profile;const g=goals;
-  document.getElementById('prof-avatar').textContent=p.sex==='w'?'👩':'👨';
+  document.getElementById('prof-avatar').textContent=p.sex==='w'?'🌸':'⛩️';
   document.getElementById('prof-name').textContent=(p.sex==='w'?'Frau':'Mann')+', '+p.age+' J.';
   const gc=GOAL_CFG[p.goal]||{label:'—'};
   const bmi=+(p.weight/(p.height/100)**2).toFixed(1);

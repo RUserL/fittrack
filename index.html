@@ -52,6 +52,16 @@
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--surface1); color: var(--text); min-height: 100vh; }
 
+
+/* ── RYUU MASCOT ──────────────────────────────────────────────────── */
+.ryuu-bubble-wrap{position:fixed;bottom:80px;right:12px;z-index:90;display:flex;flex-direction:column;align-items:flex-end;gap:6px;pointer-events:none}
+.ryuu-speech{background:var(--surface);border:1.5px solid var(--border-strong);border-radius:14px 14px 0 14px;padding:10px 13px;font-size:13px;line-height:1.45;color:var(--text-primary);max-width:200px;pointer-events:all;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.ryuu-speech.hidden{display:none}
+.ryuu-canvas-btn{width:64px;height:64px;border:none;background:none;cursor:pointer;padding:0;pointer-events:all;filter:drop-shadow(0 2px 6px rgba(0,0,0,.15))}
+.ryuu-canvas-btn canvas{width:64px;height:64px}
+.ryuu-close{position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--surface-2);border:1px solid var(--border-strong);cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;color:var(--text-secondary);pointer-events:all}
+.ryuu-tap-hint{font-size:10px;color:var(--text-muted);text-align:center;margin-top:2px;pointer-events:none}
+
 /* Japanese decorative elements */
 .topbar {
   background: linear-gradient(135deg, #C0392B 0%, #922B21 100%) !important;
@@ -1415,6 +1425,246 @@ function showPage(id){
 }
 
 function closeModal(id){document.getElementById(id).classList.remove('open');}
+
+
+// ── RYUU MASCOT ────────────────────────────────────────────────────────
+(function(){
+  const cv=document.getElementById('ryuu-cv');
+  if(!cv)return;
+  const cx=cv.getContext('2d');
+  const S=128;
+  let t=0,blink=false,mouth=false,hearts=[],firing=false,fireT=0;
+
+  const C={
+    b1:'#6EE7B7',b2:'#34D399',b3:'#A7F3D0',b4:'#059669',
+    belly:'#F0FDF4',bellyM:'#D1FAE5',
+    horn1:'#FDE68A',horn2:'#F59E0B',
+    ew:'#FFFFFF',ep:'#1C1C2E',
+    blush:'rgba(251,113,133,0.4)',
+    mouth:'#BE185D',tongue:'#F472B6',
+    fire1:'#FEF08A',fire2:'#FB923C',fire3:'#EF4444',
+    star:'#FDE047',outline:'#065F46',
+  };
+
+  function draw(){
+    cx.clearRect(0,0,S,S);
+    const sc=S/240;
+    const yo=Math.sin(t*0.04)*2.5*sc;
+    cx.save();
+    cx.scale(sc,sc);
+    cx.translate(0,yo/sc);
+
+    // shadow
+    cx.beginPath();cx.ellipse(115,255,40,5,0,0,Math.PI*2);
+    cx.fillStyle='rgba(0,0,0,0.07)';cx.fill();
+
+    // tail
+    cx.beginPath();cx.moveTo(175,205);
+    cx.quadraticCurveTo(210,188,200,158);
+    cx.quadraticCurveTo(195,145,185,152);
+    cx.quadraticCurveTo(180,165,175,178);
+    cx.fillStyle=C.b2;cx.fill();
+    // heart tail
+    cx.beginPath();cx.moveTo(198,140);
+    cx.bezierCurveTo(198,136,192,132,192,138);
+    cx.bezierCurveTo(192,132,186,136,186,140);
+    cx.lineTo(192,147);cx.closePath();
+    cx.fillStyle=C.horn2;cx.fill();
+
+    // body
+    cx.beginPath();cx.ellipse(115,192,60,58,0,0,Math.PI*2);
+    cx.fillStyle=C.b1;cx.fill();cx.strokeStyle=C.b4;cx.lineWidth=2;cx.stroke();
+    // belly
+    cx.beginPath();cx.ellipse(112,197,40,44,0,0,Math.PI*2);
+    cx.fillStyle=C.belly;cx.fill();
+
+    // wings stubby
+    cx.beginPath();cx.moveTo(60,180);cx.quadraticCurveTo(28,158,35,128);
+    cx.quadraticCurveTo(50,148,58,165);
+    cx.fillStyle=C.b2;cx.fill();cx.strokeStyle=C.b4;cx.lineWidth=1.5;cx.stroke();
+    cx.beginPath();cx.moveTo(170,180);cx.quadraticCurveTo(202,158,195,128);
+    cx.quadraticCurveTo(180,148,172,165);
+    cx.fillStyle=C.b2;cx.fill();cx.strokeStyle=C.b4;cx.lineWidth=1.5;cx.stroke();
+
+    // arms
+    cx.beginPath();cx.ellipse(62,205,16,12,0.5,0,Math.PI*2);
+    cx.fillStyle=C.b1;cx.fill();cx.strokeStyle=C.b4;cx.lineWidth=1.5;cx.stroke();
+    cx.beginPath();cx.ellipse(168,205,16,12,-0.5,0,Math.PI*2);
+    cx.fillStyle=C.b1;cx.fill();cx.strokeStyle=C.b4;cx.lineWidth=1.5;cx.stroke();
+
+    // feet
+    cx.beginPath();cx.ellipse(90,244,22,13,0.15,0,Math.PI*2);
+    cx.fillStyle=C.b2;cx.fill();cx.strokeStyle=C.b4;cx.lineWidth=1.5;cx.stroke();
+    cx.beginPath();cx.ellipse(140,244,22,13,-0.15,0,Math.PI*2);
+    cx.fillStyle=C.b2;cx.fill();cx.strokeStyle=C.b4;cx.lineWidth=1.5;cx.stroke();
+
+    // head — big!
+    cx.beginPath();cx.ellipse(115,100,62,58,0,0,Math.PI*2);
+    cx.fillStyle=C.b1;cx.fill();cx.strokeStyle=C.b4;cx.lineWidth=2;cx.stroke();
+    // shine
+    cx.beginPath();cx.ellipse(92,72,18,12,-0.4,0,Math.PI*2);
+    cx.fillStyle='rgba(255,255,255,0.25)';cx.fill();
+
+    // horns
+    cx.beginPath();cx.moveTo(88,50);cx.lineTo(80,26);cx.lineTo(96,44);cx.closePath();
+    cx.fillStyle=C.horn1;cx.fill();
+    cx.beginPath();cx.moveTo(142,50);cx.lineTo(150,26);cx.lineTo(134,44);cx.closePath();
+    cx.fillStyle=C.horn1;cx.fill();
+
+    // spines
+    [[115,38],[128,42],[140,50]].forEach(([x,y])=>{
+      cx.beginPath();cx.moveTo(x-5,y+8);cx.lineTo(x,y-10);cx.lineTo(x+5,y+8);
+      cx.fillStyle=C.b2;cx.fill();
+    });
+
+    // ear fluffs
+    cx.beginPath();cx.ellipse(60,72,14,18,0.4,0,Math.PI*2);
+    cx.fillStyle=C.b2;cx.fill();cx.strokeStyle=C.b4;cx.lineWidth=1.5;cx.stroke();
+    cx.beginPath();cx.ellipse(170,72,14,18,-0.4,0,Math.PI*2);
+    cx.fillStyle=C.b2;cx.fill();cx.strokeStyle=C.b4;cx.lineWidth=1.5;cx.stroke();
+
+    // eyes
+    const bH=blink?2:20;
+    cx.beginPath();cx.ellipse(95,96,18,bH,0,0,Math.PI*2);
+    cx.fillStyle=C.ew;cx.fill();cx.strokeStyle=C.b4;cx.lineWidth=2;cx.stroke();
+    if(!blink){
+      cx.beginPath();cx.ellipse(97,98,12,13,0,0,Math.PI*2);cx.fillStyle='#6EE7B7';cx.fill();
+      cx.beginPath();cx.ellipse(98,99,7,8,0,0,Math.PI*2);cx.fillStyle=C.ep;cx.fill();
+      cx.beginPath();cx.ellipse(92,92,5,5,0,0,Math.PI*2);cx.fillStyle='white';cx.fill();
+    }
+    cx.beginPath();cx.ellipse(135,96,18,bH,0,0,Math.PI*2);
+    cx.fillStyle=C.ew;cx.fill();cx.strokeStyle=C.b4;cx.lineWidth=2;cx.stroke();
+    if(!blink){
+      cx.beginPath();cx.ellipse(137,98,12,13,0,0,Math.PI*2);cx.fillStyle='#6EE7B7';cx.fill();
+      cx.beginPath();cx.ellipse(138,99,7,8,0,0,Math.PI*2);cx.fillStyle=C.ep;cx.fill();
+      cx.beginPath();cx.ellipse(132,92,5,5,0,0,Math.PI*2);cx.fillStyle='white';cx.fill();
+    }
+
+    // blush
+    cx.beginPath();cx.ellipse(72,108,15,10,0,0,Math.PI*2);cx.fillStyle=C.blush;cx.fill();
+    cx.beginPath();cx.ellipse(158,108,15,10,0,0,Math.PI*2);cx.fillStyle=C.blush;cx.fill();
+
+    // snout
+    cx.beginPath();cx.ellipse(115,118,18,13,0,0,Math.PI*2);
+    cx.fillStyle=C.b3;cx.fill();cx.strokeStyle=C.b4;cx.lineWidth=1;cx.stroke();
+    cx.beginPath();cx.arc(109,117,2.5,0,Math.PI*2);cx.fillStyle=C.b4;cx.fill();
+    cx.beginPath();cx.arc(121,117,2.5,0,Math.PI*2);cx.fillStyle=C.b4;cx.fill();
+
+    // mouth
+    if(mouth){
+      cx.beginPath();cx.moveTo(102,124);cx.quadraticCurveTo(115,138,128,124);
+      cx.quadraticCurveTo(122,130,115,132);cx.quadraticCurveTo(108,130,102,124);
+      cx.fillStyle=C.mouth;cx.fill();
+      cx.beginPath();cx.ellipse(115,129,7,4,0,0,Math.PI*2);cx.fillStyle=C.tongue;cx.fill();
+    } else {
+      cx.beginPath();cx.moveTo(104,122);cx.quadraticCurveTo(110,130,115,126);
+      cx.quadraticCurveTo(120,130,126,122);
+      cx.strokeStyle=C.mouth;cx.lineWidth=2.5;cx.lineCap='round';cx.stroke();
+    }
+
+    // fire
+    if(firing){
+      const a=Math.min(1,fireT/5),fl=Math.sin(fireT*0.9)*4;
+      cx.beginPath();cx.moveTo(128,120);cx.quadraticCurveTo(165+fl,106,195+fl,93+fl);
+      cx.quadraticCurveTo(188+fl,110,165+fl,114);cx.quadraticCurveTo(148,117,128,120);
+      cx.fillStyle=`rgba(239,68,68,${a*0.85})`;cx.fill();
+      cx.beginPath();cx.moveTo(130,120);cx.quadraticCurveTo(160+fl,107,185+fl,96+fl);
+      cx.quadraticCurveTo(178+fl,108,158+fl,113);cx.quadraticCurveTo(145,116,130,120);
+      cx.fillStyle=`rgba(251,146,60,${a*0.9})`;cx.fill();
+      cx.beginPath();cx.moveTo(132,120);cx.quadraticCurveTo(155+fl,108,175+fl,99+fl);
+      cx.quadraticCurveTo(170+fl,107,152+fl,112);cx.quadraticCurveTo(142,115,132,120);
+      cx.fillStyle=`rgba(253,224,71,${a})`;cx.fill();
+    }
+
+    // hearts
+    hearts.forEach(h=>{
+      cx.save();cx.globalAlpha=h.a;
+      cx.font=`${h.size}px sans-serif`;cx.fillText(h.emoji,h.x,h.y);cx.restore();
+    });
+
+    cx.restore();
+  }
+
+  function animate(){
+    t++;
+    hearts=hearts.filter(h=>h.a>0.05);
+    hearts.forEach(h=>{h.y+=h.vy;h.a-=0.028;});
+    if(firing){fireT++;if(fireT>30){firing=false;fireT=0;}}
+    draw();
+    requestAnimationFrame(animate);
+  }
+
+  function doBlink(){blink=true;setTimeout(()=>blink=false,130);}
+  setInterval(()=>{if(Math.random()<0.35)doBlink();},3500);
+
+  function spawnHearts(){
+    const emojis=['💚','🌸','⭐','✨','💫'];
+    for(let i=0;i<4;i++){
+      hearts.push({x:50+Math.random()*60,y:55,vy:-0.9-Math.random()*0.6,
+        a:1,size:10+Math.random()*6,emoji:emojis[Math.floor(Math.random()*emojis.length)]});
+    }
+  }
+
+  // Smart contextual tips based on today's data
+  const smartTips=[
+    ()=>{
+      const t=totals();const g=goals;
+      const pp=Math.round(t.prot/g.prot*100);
+      if(pp<50) return `Uwu! 🌸 Nur ${t.prot}g Protein heute! Ziel: ${g.prot}g. Hähnchen oder Quark? 💪`;
+      if(pp<90) return `Fast da! 🐲 ${t.prot}g von ${g.prot}g Protein! Noch ${g.prot-t.prot}g — du schaffst das! 🌸`;
+      return `Protein-Ziel erreicht! 🌸💚 ${t.prot}g — Ryuu ist SO stolz auf dich! Uwu!`;
+    },
+    ()=>{
+      const t=totals();const g=goals;
+      const kp=Math.round(t.kcal/g.kcal*100);
+      if(kp<40) return `Uwu! 😮 Erst ${t.kcal} kcal heute! Ziel: ${g.kcal} kcal. Vergiss nicht zu essen! 🍱`;
+      if(kp>110) return `Achtung! 🐲 ${t.kcal} kcal — etwas über Ziel (${g.kcal}). Heute leichter essen! 🌸`;
+      return `Super! 🌸🐲 ${t.kcal} von ${g.kcal} kcal — du liegst perfekt im Ziel! Uwu!`;
+    },
+    ()=>{
+      const w=today.water||0;
+      if(w<4) return `Trink Wasser! 💧🌸 Erst ${w} Gläser — Ryuu trinkt immer 8! Prost uwu!`;
+      if(w<8) return `Fast geschafft! 💧🐲 ${w}/8 Gläser — noch ${8-w} bis zum Ziel! 🌸`;
+      return `Wasser-Ziel erreicht! 💧💚 ${w} Gläser — Ryuu ist begeistert! Uwu! 🌸`;
+    },
+    ()=>{
+      const s=today.steps||0;const g=goals.steps||8000;
+      if(s<2000) return `Bewegen! 🚶🌸 Erst ${s.toLocaleString('de-CH')} Schritte! Ryuu geht mit dir spazieren! Uwu!`;
+      if(s<g) return `Weiter gehen! 🐲 ${s.toLocaleString('de-CH')} von ${g.toLocaleString('de-CH')} Schritte — noch ein bisschen! 🌸`;
+      return `Schritt-Ziel erreicht! 🚶💚 ${s.toLocaleString('de-CH')} Schritte — Ryuu tanzt vor Freude! 🌸`;
+    },
+    ()=>{
+      if(today.trainings&&today.trainings.length>0)
+        return `Training gemacht! 💪🌸 ${today.trainings[0].name} — Ryuu ist SO stolz auf dich! Uwu! 🐲`;
+      return `Kein Training heute? 🐲 Das ist ok! Oder doch noch schnell 20 Min? Ryuu macht mit! 🌸`;
+    },
+  ];
+
+  window.ryuuTap=function(){
+    const tip=smartTips[Math.floor(Math.random()*smartTips.length)]();
+    document.getElementById('ryuu-text').innerHTML=tip;
+    document.getElementById('ryuu-speech').classList.remove('hidden');
+    spawnHearts();
+    mouth=true;setTimeout(()=>mouth=false,1800);
+    if(tip.includes('Protein')||tip.includes('Training'))firing=true;
+    setTimeout(()=>{document.getElementById('ryuu-speech').classList.add('hidden');},6000);
+  };
+
+  window.ryuuDismiss=function(){
+    document.getElementById('ryuu-speech').classList.add('hidden');
+  };
+
+  // Smart auto-tip after 8 seconds
+  setTimeout(()=>{
+    const tip=smartTips[Math.floor(Math.random()*smartTips.length)]();
+    document.getElementById('ryuu-text').innerHTML=tip;
+    document.getElementById('ryuu-speech').classList.remove('hidden');
+    spawnHearts();
+    setTimeout(()=>document.getElementById('ryuu-speech').classList.add('hidden'),7000);
+  },8000);
+
+  animate();
+})();
 
 // ── START ─────────────────────────────────────────────────────────────
 loadAll();

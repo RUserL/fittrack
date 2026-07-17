@@ -1040,6 +1040,49 @@ function addQty(el){
 }
 
 
+let lastPhotoB64 = null;
+let lastPhotoType = 'image/jpeg';
+let selectedPlate = null;
+const portionLabels = ['Sehr klein (~30%)', 'Klein (~60%)', 'Mittel (~100%)', 'Gross (~140%)', 'Sehr gross (~180%)'];
+
+function setPlate(size, label){
+  selectedPlate = {size, label};
+  ['xs','s','m','l','bowl'].forEach(s=>{
+    const b = document.getElementById('pb-'+s);
+    if(b) b.className = 'plate-btn' + (s===size?' sel':'');
+  });
+}
+
+function updatePortionLabel(val){
+  const el = document.getElementById('portion-label');
+  if(el) el.textContent = portionLabels[parseInt(val)-1];
+}
+
+function updateWeightHint(){
+  const w = parseInt((document.getElementById('m-weight-g')||{value:''}).value)||0;
+  const el = document.getElementById('weight-hint');
+  if(!el) return;
+  el.textContent = w > 0 ? '✓ Gewicht wird für präzise Kalorien-Berechnung verwendet'
+                         : 'Ohne Gewicht schätzt KI anhand Teller & Portion';
+}
+
+function buildPrompt(){
+  const hint = (document.getElementById('m-hint')||{value:''}).value.trim();
+  const weightG = parseInt((document.getElementById('m-weight-g')||{value:''}).value)||0;
+  const portionVal = parseInt((document.getElementById('portion-slider')||{value:'3'}).value)||3;
+  const portionText = portionLabels[portionVal-1];
+  const plate = selectedPlate;
+
+  let prompt = 'Analysiere dieses Essen-Foto. Antworte NUR im Format: GERICHT|KCAL|PROTEIN|CARBS|FETT (ganze Zahlen, keine Einheiten). Beispiel: Hähnchenbrust mit Reis|520|42|55|8';
+
+  if(hint)     prompt += '\n\nWICHTIG — Nutzer sagt es ist: ' + hint + '. Dies hat höchste Priorität bei der Erkennung!';
+  if(plate)    prompt += '\nTellergrösse: ' + plate.label;
+  if(weightG)  prompt += '\nGEWICHT: ' + weightG + 'g — berechne Kalorien EXAKT für dieses Gewicht!';
+  else         prompt += '\nPortionsgrösse: ' + portionText;
+
+  return prompt;
+}
+
 async function runAnalysis(){
   const key=localStorage.getItem('ft_apikey')||'';
   if(!key){alert('Bitte zuerst API-Key im Profil eingeben.');return;}
@@ -1170,65 +1213,46 @@ function updateApiKeyStatus(){
 }
 
 async function analyzePhoto(ev){
-  const file=ev.target.files[0];if(!file)return;
-  document.getElementById('text-search').value='';
-  const pi=document.getElementById('prev-img');
-  pi.src=URL.createObjectURL(file);pi.style.display='block';
-  document.getElementById('hint-box').style.display='block';
-  document.getElementById('ai-loading').style.display='block';
-  document.getElementById('ai-result').style.display='none';
-  document.getElementById('hint-box').style.display='block';
-  document.getElementById('m-hint').value='';
+  const file = ev.target.files[0];
+  if(!file) return;
 
-  const b64=await new Promise((ok,err)=>{
-    const r=new FileReader();
-    r.onload=()=>ok(r.result.split(',')[1]);
-    r.onerror=err;
+  const key = localStorage.getItem('ft_apikey') || '';
+  if(!key){
+    document.getElementById('api-key-notice').style.display = 'block';
+    return;
+  }
+  document.getElementById('api-key-notice').style.display = 'none';
+
+  // Clear text search
+  const ts = document.getElementById('text-search');
+  if(ts) ts.value = '';
+
+  // Show preview
+  const pi = document.getElementById('prev-img');
+  pi.src = URL.createObjectURL(file);
+  pi.style.display = 'block';
+
+  // Read file into base64 — store globally, do NOT analyze yet
+  const b64 = await new Promise((ok, err) => {
+    const r = new FileReader();
+    r.onload = () => ok(r.result.split(',')[1]);
+    r.onerror = err;
     r.readAsDataURL(file);
   });
-  window._lastB64=b64;
-  window._lastMime=file.type||'image/jpeg';
-  const hint=(document.getElementById('m-hint').value||'').trim();
+  lastPhotoB64 = b64;
+  lastPhotoType = file.type || 'image/jpeg';
 
-  try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':localStorage.getItem('ft_apikey')||'','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-6',
-        max_tokens:500,
-        messages:[{role:'user',content:[
-          {type:'image',source:{type:'base64',media_type:file.type||'image/jpeg',data:b64}},
-          {type:'text',text:`Analysiere dieses Essen-Foto präzise.${hint ? ' WICHTIGER HINWEIS VOM NUTZER: '+hint+'. Nutze diese Information als primäre Quelle für die Erkennung — sie ist wichtiger als deine visuelle Schätzung.' : ''} Schätze Portionsgrösse und Nährwerte exakt. Wenn eine Anzahl oder Menge genannt wird (z.B. "6 Kirschen", "3 Bonbons"), berechne die Nährwerte genau für diese Menge. Antworte NUR im Format: GERICHT|KCAL|PROTEIN|CARBS|FETT (alle Zahlen ohne Einheiten, nur ganze Zahlen). Beispiel: Hähnchenbrust mit Reis|520|42|55|8`}
-        ]}]
-      })
-    });
-    const d=await resp.json();
-    const text=d.content?.find(c=>c.type==='text')?.text||'';
-    const parts=text.trim().split('|');
-    document.getElementById('ai-loading').style.display='none';
-    if(parts.length>=5){
-      document.getElementById('m-name').value=parts[0];
-      document.getElementById('m-kcal').value=parseInt(parts[1])||'';
-      document.getElementById('m-prot').value=parseInt(parts[2])||'';
-      document.getElementById('m-carbs').value=parseInt(parts[3])||'';
-      document.getElementById('m-fat').value=parseInt(parts[4])||'';
-      const res=document.getElementById('ai-result');
-      res.style.display='block';
-      res.style.background='';res.style.color='';
-      const hint2=(document.getElementById('m-hint').value||'').trim();
-      res.innerHTML=`✅ <b>${parts[0]}</b> — ${parts[1]} kcal · P:${parts[2]}g · C:${parts[3]}g · F:${parts[4]}g${hint2?'<br><small style="opacity:.7">Mit Hinweis: '+hint2+'</small>':'<br><small style="opacity:.7">Werte können angepasst werden</small>'}`;
-    } else {
-      document.getElementById('ai-result').style.display='block';
-      document.getElementById('ai-result').innerHTML='⚠️ Foto unklar — bitte Werte manuell eingeben.';
-      document.getElementById('ai-result').style.background='var(--amber-bg)';
-      document.getElementById('ai-result').style.color='var(--amber-text)';
-    }
-  }catch(e){
-    document.getElementById('ai-loading').style.display='none';
-    document.getElementById('ai-result').style.display='block';
-    document.getElementById('ai-result').innerHTML='❌ Analyse fehlgeschlagen — Werte manuell eingeben.';
-  }
+  // Reset hint and show hint-box — wait for user to press button
+  document.getElementById('m-hint').value = '';
+  document.getElementById('hint-box').style.display = 'block';
+  document.getElementById('ai-loading').style.display = 'none';
+
+  // Show "ready" notice
+  const res = document.getElementById('ai-result');
+  res.style.display = 'block';
+  res.style.background = 'var(--blue-bg)';
+  res.style.color = 'var(--blue-text)';
+  res.innerHTML = '📸 <b>Foto bereit!</b> Füge optional eine Beschreibung hinzu — dann <b>„✨ Jetzt analysieren"</b> drücken.';
 }
 
 // ── CALENDAR ──────────────────────────────────────────────────────────
